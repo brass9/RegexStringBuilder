@@ -33,6 +33,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Text;
+using RegexStringBuilder.Text;
 
 namespace RegexStringBuilder.Mono
 {
@@ -40,7 +41,7 @@ namespace RegexStringBuilder.Mono
 	{
 		internal delegate void MatchAppendEvaluator (Match match, StringBuilder sb);
 
-		public virtual string Replace (Regex regex, string input, string replacement, int count, int startat)
+		public virtual IString Replace (Regex regex, IString input, string replacement, int count, int startat)
 		{
 			ReplacementEvaluator ev = new ReplacementEvaluator (regex, replacement);
 			if (regex.RightToLeft)
@@ -49,7 +50,7 @@ namespace RegexStringBuilder.Mono
 				return LTRReplace (regex, input, new MatchAppendEvaluator (ev.EvaluateAppend), count, startat, ev.NeedsGroupsOrCaptures);
 		}
 
-		virtual public string [] Split (Regex regex, string input, int count, int startat)
+		virtual public string[] Split (Regex regex, IString input, int count, int startat)
 		{
 			var splits = new List<string> ();
 			if (count == 0)
@@ -93,23 +94,23 @@ namespace RegexStringBuilder.Mono
 			return splits.ToArray ();
 		}
 
-		public Match Scan (Regex regex, string text, int start, int end)
+		public Match Scan (Regex regex, IString text, int start, int end)
 		{
 			return Scan (regex, text, start, end, false);
 		}
 
-		public abstract Match Scan (Regex regex, string text, int start, int end, bool substring_mode);
+		public abstract Match Scan (Regex regex, IString text, int start, int end, bool substring_mode);
 
-		virtual public string Result (string replacement, Match match)
+		virtual public IString Result (string replacement, Match match)
 		{
 			return ReplacementEvaluator.Evaluate (replacement, match);
 		}
 
-		internal string LTRReplace (Regex regex, string input, MatchAppendEvaluator evaluator, int count, int startat) {
+		internal IString LTRReplace (Regex regex, IString input, MatchAppendEvaluator evaluator, int count, int startat) {
 			return LTRReplace (regex, input, evaluator, count, startat, true);
 		}
 
-		internal string LTRReplace (Regex regex, string input, MatchAppendEvaluator evaluator, int count, int startat, bool needs_groups_or_captures)
+		internal IString LTRReplace (Regex regex, IString input, MatchAppendEvaluator evaluator, int count, int startat, bool needs_groups_or_captures)
 		{
 			this.needs_groups_or_captures = needs_groups_or_captures;
 			
@@ -117,11 +118,11 @@ namespace RegexStringBuilder.Mono
 			if (!m.Success)
 				return input;
 
-			StringBuilder result = new StringBuilder (input.Length);
+			StringBuilder result = new StringBuilder (input.Length*2);
 			int ptr = startat;
 			int counter = count;
 
-			result.Append (input, 0, ptr);
+			input.AppendTo(result, 0, ptr);
 
 			do {
 				if (count != -1)
@@ -129,19 +130,20 @@ namespace RegexStringBuilder.Mono
 						break;
 				if (m.Index < ptr)
 					throw new SystemException ("how");
-				result.Append (input, ptr, m.Index - ptr);
+				int appendLen = m.Index - ptr;
+				input.AppendTo(result, ptr, appendLen);
 				evaluator (m, result);
 
 				ptr = m.Index + m.Length;
 				m = m.NextMatch ();
 			} while (m.Success);
 
-			result.Append (input, ptr, input.Length - ptr);
+			input.AppendTo(result, ptr, input.Length - ptr);
 
-			return result.ToString ();
+			return new WrappedStringBuilder(result);
 		}
 
-		internal string RTLReplace (Regex regex, string input, MatchEvaluator evaluator, int count, int startat)
+		internal IString RTLReplace (Regex regex, IString input, MatchEvaluator evaluator, int count, int startat)
 		{
 			Match m = Scan (regex, input, startat, input.Length);
 			if (!m.Success)
@@ -164,7 +166,7 @@ namespace RegexStringBuilder.Mono
 				if (m.Index + m.Length > ptr)
 					throw new SystemException ("how");
 				pieces.Add (input.Substring (m.Index + m.Length, ptr - m.Index - m.Length));
-				pieces.Add (evaluator (m));
+				pieces.Add (evaluator(m).ToString());
 
 				ptr = m.Index;
 				m = m.NextMatch ();
@@ -172,13 +174,13 @@ namespace RegexStringBuilder.Mono
 
 			StringBuilder result = new StringBuilder ();
 
-			result.Append (input, 0, ptr);
+			input.AppendTo(result, 0, ptr);
 			for (int i = pieces.Count; i > 0; )
-				result.Append (pieces [--i]);
+				result.Append(pieces [--i]);
 
 			pieces.Clear ();
 
-			return result.ToString ();
+			return new WrappedStringBuilder(result);
 		}
 
 		// Specify whenever Match objects created by this machine need to be fully

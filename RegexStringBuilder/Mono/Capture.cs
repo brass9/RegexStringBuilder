@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using RegexStringBuilder.Text;
 using System;
 
 namespace RegexStringBuilder.Mono {
@@ -52,22 +53,22 @@ namespace RegexStringBuilder.Mono {
 
 		// internal members
 
-		internal Capture (string text) : this (text, 0, 0) { }
+		internal Capture (IString text) : this (text, 0, 0) { }
 
-		internal Capture (string text, int index, int length)
+		internal Capture (IString text, int index, int length)
 		{
 			this.text = text;
 			this.index = index;
 			this.length = length;
 		}
 		
-		internal string Text {
+		internal IString Text {
 			get { return text; }
 		}
 
 		// private
 
 		internal int index, length;
-		internal string text;
+		internal IString text;
 	}
 }

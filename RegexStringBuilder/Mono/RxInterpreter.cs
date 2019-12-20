@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.Diagnostics;
+using RegexStringBuilder.Text;
 
 namespace RegexStringBuilder.Mono {
 
@@ -15,7 +16,7 @@ namespace RegexStringBuilder.Mono {
 
 	sealed class RxInterpreter: BaseMachine {
 		byte[] program;
-		string str;
+		IString str;
 		int string_start;
 		int string_end;
 		int group_count;
@@ -147,7 +148,7 @@ namespace RegexStringBuilder.Mono {
 			ResetGroups ();
 		}
 
-		public override Match Scan (Regex regex, string text, int start, int end, bool substring_mode) {
+		public override Match Scan (Regex regex, IString text, int start, int end, bool substring_mode) {
 			str = text;
 			string_start = start;
 			string_end = end;

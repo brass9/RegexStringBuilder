@@ -28,6 +28,7 @@
 //
 
 using RegexStringBuilder.Mono.Common;
+using RegexStringBuilder.Text;
 using System;
 
 namespace RegexStringBuilder.Mono {
@@ -65,7 +66,7 @@ namespace RegexStringBuilder.Mono {
 			return machine.Scan (regex, Text, scan_ptr, text_length);
 		}
 
-		public virtual string Result (string replacement)
+		public virtual IString Result (string replacement)
 		{
 			if (replacement == null)
 				throw new ArgumentNullException ("replacement");
@@ -87,14 +88,14 @@ namespace RegexStringBuilder.Mono {
 			groups.SetValue (this, 0);
 		}
 
-		internal Match (Regex regex, IMachine machine, string text, int text_length, int n_groups, 
+		internal Match (Regex regex, IMachine machine, IString text, int text_length, int n_groups, 
 				int index, int length) :
 			base (text, index, length) {
 			this.regex = regex;
 			this.machine = machine;
 			this.text_length = text_length;
 		}
-		internal Match (Regex regex, IMachine machine, string text, int text_length, int n_groups, 
+		internal Match (Regex regex, IMachine machine, IString text, int text_length, int n_groups, 
 				int index, int length, int n_caps) :
 			base (text, index, length, n_caps)
 		{

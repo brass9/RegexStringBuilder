@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using RegexStringBuilder.Text;
 using System;
 using System.Collections;
 
@@ -100,11 +101,11 @@ namespace RegexStringBuilder.Mono {
 	// see category.cs for Category enum
 
 	interface IMachine {
-		Match Scan (Regex regex, string text, int start, int end);
-		Match Scan (Regex regex, string text, int start, int end, bool substring_mode);
-		string [] Split (Regex regex, string input, int count, int startat);
-		string Replace (Regex regex, string input, string replacement, int count, int startat);
-		string Result (string replacement, Match match);
+		Match Scan (Regex regex, IString text, int start, int end);
+		Match Scan (Regex regex, IString text, int start, int end, bool substring_mode);
+		string[] Split (Regex regex, IString input, int count, int startat);
+		IString Replace (Regex regex, IString input, string replacement, int count, int startat);
+		IString Result (string replacement, Match match);
 	}
 
 	interface IMachineFactory {
@@ -112,7 +113,7 @@ namespace RegexStringBuilder.Mono {
 		IDictionary Mapping { get; set; }
 		int GroupCount { get; }
 		int Gap { get; set; } // Index of first group whose number differs from its index, or 1+GroupCount
-		string [] NamesMapping { get; set; }
+		string[] NamesMapping { get; set; }
 	}
 
 	// Anchor SKIP OFFSET

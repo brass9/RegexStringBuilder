@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using RegexStringBuilder.Text;
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -61,7 +62,7 @@ namespace RegexStringBuilder.Mono {
 
 		// IMachine implementation
 
-		public override Match Scan (Regex regex, string text, int start, int end, bool substring_mode) {
+		public override Match Scan (Regex regex, IString text, int start, int end, bool substring_mode) {
 			this.regex_rtl = (regex.Options & RegexOptions.RightToLeft) != 0;
 
 			if (!initialized)
@@ -183,8 +184,8 @@ namespace RegexStringBuilder.Mono {
 
 						if (qs == null) {
 							bool ignore = ((OpFlags)program[pc + 3] & OpFlags.IgnoreCase) != 0;
-							string substring = GetString (pc + 3);
-							qs = new QuickSearch (substring, ignore, reverse);
+							char[] substring = GetChars (pc + 3);
+							qs = new QuickSearch (new string(substring), ignore, reverse);
 						}
 						while ((anch_reverse && anch_ptr >= anch_begin) 
 						       || (!anch_reverse && anch_ptr <= anch_end)) {
@@ -899,7 +900,7 @@ namespace RegexStringBuilder.Mono {
 			return CategoryUtils.IsCategory (Category.Word, c);
 		}
 
-		private string GetString (int pc) {
+		private char[] GetChars(int pc) {
 			int len = program[pc + 1];
 			int str = pc + 2;
 
@@ -907,7 +908,7 @@ namespace RegexStringBuilder.Mono {
 			for (int i = 0; i < len; ++ i)
 				cs[i] = (char)program[str ++];
 
-			return new string (cs);
+			return cs;
 		}
 
 		// capture management
@@ -1058,7 +1059,7 @@ namespace RegexStringBuilder.Mono {
 
 		private ushort[] program;		// regex program
 		private int program_start;		// first instruction after info block
-		private string text;			// input text
+		private IString text;			// input text
 		private int text_end;			// end of input text (last character + 1)
 		private int group_count;		// number of capturing groups
 		private int match_min;//, match_max;	// match width information

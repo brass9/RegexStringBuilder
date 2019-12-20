@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using RegexStringBuilder.Text;
 using System;
 using System.Collections;
 
@@ -69,7 +70,7 @@ namespace RegexStringBuilder.Mono {
 			get { return ignore; }
 		}
 
-		public int Search (string text, int start, int end) {
+		public int Search (IString text, int start, int end) {
 			int ptr = start;
 
 		

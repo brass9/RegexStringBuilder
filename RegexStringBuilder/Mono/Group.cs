@@ -29,6 +29,7 @@
 
 using System;
 using RegexStringBuilder.Mono.Common;
+using RegexStringBuilder.Text;
 
 namespace RegexStringBuilder.Mono {
 
@@ -52,19 +53,19 @@ namespace RegexStringBuilder.Mono {
 		}
 
 		// internal
-		internal Group (string text, int index, int length, int n_caps) : base (text, index, length)
+		internal Group (IString text, int index, int length, int n_caps) : base (text, index, length)
 		{
 			success = true;
 			captures = new CaptureCollection (n_caps);
 			captures.SetValue (this, n_caps - 1);
 		}
 
-		internal Group (string text, int index, int length) : base (text, index, length)
+		internal Group (IString text, int index, int length) : base (text, index, length)
 		{
 			success = true;
 		}
 		
-		internal Group () : base ("")
+		internal Group () : base (new WrappedString(String.Empty))
 		{
 			success = false;
 			captures = new CaptureCollection (0);

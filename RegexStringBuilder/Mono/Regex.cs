@@ -41,6 +41,7 @@ using Parser = RegexStringBuilder.Mono.Syntax.Parser;
 
 using System.Diagnostics;
 using RegexStringBuilder.Mono.Common;
+using RegexStringBuilder.Text;
 
 namespace RegexStringBuilder.Mono {
 	
@@ -111,69 +112,69 @@ namespace RegexStringBuilder.Mono {
 			return Parser.Unescape (str);
 		}
 
-		public static bool IsMatch (string input, string pattern)
+		public static bool IsMatch (IString input, string pattern)
 		{
 			return IsMatch (input, pattern, RegexOptions.None);
 		}
 
-		public static bool IsMatch (string input, string pattern, RegexOptions options)
+		public static bool IsMatch (IString input, string pattern, RegexOptions options)
 		{
 			Regex re = new Regex (pattern, options);
 			return re.IsMatch (input);
 		}
 
-		public static Match Match (string input, string pattern)
+		public static Match Match (IString input, string pattern)
 		{
 			return Regex.Match (input, pattern, RegexOptions.None);
 		}
 
-		public static Match Match (string input, string pattern, RegexOptions options)
+		public static Match Match (IString input, string pattern, RegexOptions options)
 		{
 			Regex re = new Regex (pattern, options);
 			return re.Match (input);
 		}
 
-		public static MatchCollection Matches (string input, string pattern)
+		public static MatchCollection Matches (IString input, string pattern)
 		{
 			return Matches (input, pattern, RegexOptions.None);
 		}
 
-		public static MatchCollection Matches (string input, string pattern, RegexOptions options)
+		public static MatchCollection Matches (IString input, string pattern, RegexOptions options)
 		{
 			Regex re = new Regex (pattern, options);
 			return re.Matches (input);
 		}
 
-		public static string Replace (string input, string pattern, MatchEvaluator evaluator)
+		public static IString Replace (IString input, string pattern, MatchEvaluator evaluator)
 		{
 			return Regex.Replace (input, pattern, evaluator, RegexOptions.None);
 		}
 
-		public static string Replace (string input, string pattern, MatchEvaluator evaluator,
+		public static IString Replace (IString input, string pattern, MatchEvaluator evaluator,
 					      RegexOptions options)
 		{
 			Regex re = new Regex (pattern, options);
 			return re.Replace (input, evaluator);
 		}
 
-		public static string Replace (string input, string pattern, string replacement)
+		public static IString Replace (IString input, string pattern, string replacement)
 		{
 			return Regex.Replace (input, pattern, replacement, RegexOptions.None);
 		}
 
-		public static string Replace (string input, string pattern, string replacement,
+		public static IString Replace (IString input, string pattern, string replacement,
 					      RegexOptions options)
 		{
 			Regex re = new Regex (pattern, options);
 			return re.Replace (input, replacement);
 		}
 
-		public static string [] Split (string input, string pattern)
+		public static string [] Split (IString input, string pattern)
 		{
 			return Regex.Split (input, pattern, RegexOptions.None);
 		}
 
-		public static string [] Split (string input, string pattern, RegexOptions options)
+		public static string [] Split (IString input, string pattern, RegexOptions options)
 		{
 			Regex re = new Regex (pattern, options);
 			return re.Split (input);
@@ -231,28 +232,28 @@ namespace RegexStringBuilder.Mono {
 		
 		[MonoTODO ("Timeouts are ignored.")]
 		public static bool IsMatch (
-			string input, string pattern, RegexOptions options, TimeSpan matchTimeout)
+			IString input, string pattern, RegexOptions options, TimeSpan matchTimeout)
 		{
 			return IsMatch (input, pattern, options);
 		}
 		
 		[MonoTODO ("Timeouts are ignored.")]
 		public static Match Match (
-			string input, string pattern, RegexOptions options, TimeSpan matchTimeout)
+			IString input, string pattern, RegexOptions options, TimeSpan matchTimeout)
 		{
 			return Match (input, pattern, options);
 		}
 		
 		[MonoTODO ("Timeouts are ignored.")]
 		public static MatchCollection Matches (
-			string input, string pattern, RegexOptions options, TimeSpan matchTimeout)
+			IString input, string pattern, RegexOptions options, TimeSpan matchTimeout)
 		{
 			return Matches (input, pattern, options, matchTimeout);
 		}
 		
 		[MonoTODO ("Timeouts are ignored.")]
 		public static string Replace (
-			string input, string pattern, string replacement, RegexOptions options,
+			IString input, string pattern, string replacement, RegexOptions options,
 			TimeSpan matchTimeout)
 		{
 			return Replace (input, pattern, replacement, options);
@@ -260,7 +261,7 @@ namespace RegexStringBuilder.Mono {
 		
 		[MonoTODO ("Timeouts are ignored.")]
 		public static string Replace (
-			string input, string pattern, MatchEvaluator evaluator, RegexOptions options,
+			IString input, string pattern, MatchEvaluator evaluator, RegexOptions options,
 			TimeSpan matchTimeout)
 		{
 			return Replace (input, pattern, evaluator, options);
@@ -268,7 +269,7 @@ namespace RegexStringBuilder.Mono {
 		
 		[MonoTODO ("Timeouts are ignored.")]
 		public static string[] Split (
-			string input, string pattern, RegexOptions options, TimeSpan matchTimeout)
+			IString input, string pattern, RegexOptions options, TimeSpan matchTimeout)
 		{
 			return Split (input, pattern, options);
 		}
@@ -428,29 +429,29 @@ namespace RegexStringBuilder.Mono {
 			return Array.BinarySearch (GroupNumbers, gap, group_count - gap + 1, number);
 		}
 
-		int default_startat (string input)
+		int default_startat (IString input)
 		{
 			return (RightToLeft && input != null) ? input.Length : 0;
 		}
 
 		// match methods
 		
-		public bool IsMatch (string input)
+		public bool IsMatch (IString input)
 		{
 			return IsMatch (input, default_startat (input));
 		}
 
-		public bool IsMatch (string input, int startat)
+		public bool IsMatch (IString input, int startat)
 		{
 			return Match (input, startat).Success;
 		}
 
-		public Match Match (string input)
+		public Match Match (IString input)
 		{
 			return Match (input, default_startat (input));
 		}
 
-		public Match Match (string input, int startat)
+		public Match Match (IString input, int startat)
 		{
 			if (input == null)
 				throw new ArgumentNullException ("input");
@@ -459,7 +460,7 @@ namespace RegexStringBuilder.Mono {
 			return CreateMachine ().Scan (this, input, startat, input.Length, false);
 		}
 
-		public Match Match (string input, int beginning, int length)
+		public Match Match (IString input, int beginning, int length)
 		{
 			if (input == null)
 				throw new ArgumentNullException ("input");
@@ -470,12 +471,12 @@ namespace RegexStringBuilder.Mono {
 			return CreateMachine ().Scan (this, input, beginning, beginning + length, true);
 		}
 
-		public MatchCollection Matches (string input)
+		public MatchCollection Matches (IString input)
 		{
 			return Matches (input, default_startat (input));
 		}
 
-		public MatchCollection Matches (string input, int startat)
+		public MatchCollection Matches (IString input, int startat)
 		{
 			Match m = Match (input, startat);
 			return new MatchCollection (m);
@@ -483,12 +484,12 @@ namespace RegexStringBuilder.Mono {
 
 		// replace methods
 
-		public string Replace (string input, MatchEvaluator evaluator)
+		public IString Replace (IString input, MatchEvaluator evaluator)
 		{
 			return Replace (input, evaluator, Int32.MaxValue, default_startat (input));
 		}
 
-		public string Replace (string input, MatchEvaluator evaluator, int count)
+		public IString Replace (IString input, MatchEvaluator evaluator, int count)
 		{
 			return Replace (input, evaluator, count, default_startat (input));
 		}
@@ -499,7 +500,7 @@ namespace RegexStringBuilder.Mono {
 			public void Evaluate (Match m, StringBuilder sb) { sb.Append (ev (m)); }
 		}
 
-		public string Replace (string input, MatchEvaluator evaluator, int count, int startat)
+		public IString Replace (IString input, MatchEvaluator evaluator, int count, int startat)
 		{
 			if (input == null)
 				throw new ArgumentNullException ("input");
@@ -523,17 +524,17 @@ namespace RegexStringBuilder.Mono {
 								 count, startat);
 		}
 
-		public string Replace (string input, string replacement)
+		public IString Replace (IString input, string replacement)
 		{
 			return Replace (input, replacement, Int32.MaxValue, default_startat (input));
 		}
 
-		public string Replace (string input, string replacement, int count)
+		public IString Replace (IString input, string replacement, int count)
 		{
 			return Replace (input, replacement, count, default_startat (input));
 		}
 
-		public string Replace (string input, string replacement, int count, int startat)
+		public IString Replace (IString input, string replacement, int count, int startat)
 		{
 			if (input == null)
 				throw new ArgumentNullException ("input");
@@ -549,17 +550,17 @@ namespace RegexStringBuilder.Mono {
 
 		// split methods
 
-		public string [] Split (string input)
+		public string [] Split (IString input)
 		{
 			return Split (input, Int32.MaxValue, default_startat (input));
 		}
 
-		public string [] Split (string input, int count)
+		public string [] Split (IString input, int count)
 		{
 			return Split (input, count, default_startat (input));
 		}
 
-		public string [] Split (string input, int count, int startat)
+		public string [] Split (IString input, int count, int startat)
 		{
 			if (input == null)
 				throw new ArgumentNullException ("input");

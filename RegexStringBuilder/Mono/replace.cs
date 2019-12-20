@@ -32,11 +32,12 @@ using System.Text;
 using System.Collections;
 
 using Parser = RegexStringBuilder.Mono.Syntax.Parser;
+using RegexStringBuilder.Text;
 
 namespace RegexStringBuilder.Mono {
 
 	class ReplacementEvaluator {
-		public static string Evaluate (string replacement, Match match)
+		public static IString Evaluate (string replacement, Match match)
 		{
 			ReplacementEvaluator ev = new ReplacementEvaluator (match.Regex, replacement);
 			return ev.Evaluate (match);
@@ -51,13 +52,13 @@ namespace RegexStringBuilder.Mono {
 			Compile ();
 		}
 
-		public string Evaluate (Match match) 
+		public IString Evaluate (Match match) 
 		{
 			if (n_pieces == 0)
-				return replacement;
+				return new WrappedString(replacement);
 			StringBuilder sb = new StringBuilder ();
 			EvaluateAppend (match, sb);
-			return sb.ToString ();
+			return new WrappedStringBuilder(sb);
 		}
 
 		public void EvaluateAppend (Match match, StringBuilder sb)
@@ -75,14 +76,14 @@ namespace RegexStringBuilder.Mono {
 					sb.Append (replacement, k, count);
 				} else if (k < -3) {
 					Group group = match.Groups [-(k + 4)];
-					sb.Append (group.Text, group.Index, group.Length);
+					group.text.AppendTo(sb, group.Index, group.Length);
 				} else if (k == -1) {
 					sb.Append (match.Text);
 				} else if (k == -2) {
-					sb.Append (match.Text, 0, match.Index);
+					match.Text.AppendTo(sb, 0, match.Index);
 				} else { // k == -3
 					int matchend = match.Index + match.Length;
-					sb.Append (match.Text, matchend, match.Text.Length - matchend);
+					match.Text.AppendTo(sb, matchend, match.Text.Length - matchend);
 				} 
 			}
 		}

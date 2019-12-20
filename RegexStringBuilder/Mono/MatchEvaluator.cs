@@ -27,10 +27,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using RegexStringBuilder.Text;
 using System;
 
 namespace RegexStringBuilder.Mono {
 
 	[Serializable]
-	public delegate string MatchEvaluator (Match match);
+	public delegate IString MatchEvaluator (Match match);
 }
